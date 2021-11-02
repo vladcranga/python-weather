@@ -7,6 +7,10 @@ This is a weather app made using Python and the [openweathermap](https://openwea
 - PySimpleGUI
 - requests
 
+```
+pip install -r requirements.txt
+```
+
 ## Features:
 - A GUI
 - Display the current temperature for a location based on coordinates
