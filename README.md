@@ -6,6 +6,7 @@ This is a weather app made using Python and the [openweathermap](https://openwea
 - Python 3
 - PySimpleGUI
 - requests
+- An openweathermap API key
 
 ```
 pip install -r requirements.txt
