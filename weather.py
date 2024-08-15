@@ -2,77 +2,110 @@
 # An app that displays the weather in a location.
 # It uses the openweathermap API: https: / openweathermap.org/
 
-
-import PySimpleGUI as sg
+import tkinter as tk
+from tkinter import ttk
 import requests
 import json
 import webbrowser
 
-# the API key
-fhand = open("api.txt", "r")
-api_key = fhand.read()
+class Weather:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Weather Forecast")
+        self.master.geometry("500x400")
+        self.master.configure(bg="#f0f0f0")
 
-# specify the theme
-sg.theme("BlueMono")
+        self.create_widgets()
+    
+    def create_widgets(self):
+        """Creates and arranges the GUI widgets."""
+        self.frame = ttk.Frame(self.master, padding="20")
+        self.frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self.master.columnconfigure(0, weight=1)
+        self.master.rowconfigure(0, weight=1)   
 
-# list the layout elements
-left_half = [
-    [
-        sg.Text("Enter the latitude: "),
-        sg.In(size=(25, 1), enable_events=True, key="lat"),
-    ],
-    [
-        sg.Text("Enter the longitude: "),
-        sg.In(size=(25, 1), enable_events=True, key="long"),
-    ],
-    [sg.Button("Show"), sg.Button("Get Coordinates"), sg.Button("Quit")],
-]
+        # Configure styles
+        style = ttk.Style()
+        style.configure('TLabel', font=('Arial', 12))
+        style.configure('TButton', font=('Arial', 11))
+        style.configure('TEntry', font=('Arial', 11))
 
-right_half = [
-    [sg.Text("Weather Information: ", pad=(145, 0))],
-    [sg.Text("", size=(70, 2), key="weather_info")],
-]
+        # Create and place input fields
+        ttk.Label(self.frame, text="Latitude:").grid(row=0, column=0, sticky=tk.W, pady=10)
+        self.input_latitude = ttk.Entry(self.frame, width=30)
+        self.input_latitude.grid(row=0, column=1, sticky=tk.W, pady=5, padx=(0, 10))
 
-layout = [[sg.Column(left_half), sg.VSeparator(), sg.Column(right_half)]]
+        ttk.Label(self.frame, text="Longitude:").grid(row=1, column=0, sticky=tk.W, pady=10)
+        self.input_longitude = ttk.Entry(self.frame, width=30)
+        self.input_longitude.grid(row=1, column=1, sticky=tk.W, pady=5, padx=(0, 10))
 
-#  create the window
-window = sg.Window("Weather Forecast", layout, margins=(10, 10),
-                   size=(860, 130))
+        # Create and place buttons
+        button_frame = ttk.Frame(self.frame)
+        button_frame.grid(row=2, column=0, columnspan=2, pady=20)
 
-# the event loop
-while True:
-    event, values = window.read()
+        ttk.Button(button_frame, text="Show Weather", command=self.show_weather).grid(row=0, column=0, padx=5)
+        ttk.Button(button_frame, text="Get Coordinates", command=self.get_coordinates).grid(row=0, column=1, padx=5)
+        ttk.Button(button_frame, text="Quit", command=self.quit_app).grid(row=0, column=2, padx=5)
 
-    # display weather information
-    if event == "Show":
-        lat = values["lat"]
-        long = values["long"]
+        # Create and place weather information
+        self.weather_info = tk.StringVar()
+        ttk.Label(self.frame, textvariable=self.weather_info, wraplength=500, justify="center").grid(
+            row=3, column=0, columnspan=2, pady=20)
+    
+    def get_api_key(self):
+        """Retrieves the API key."""
+        with open ("api.txt", "r") as api_key:
+            return api_key.read().strip()
+    
+    def show_weather(self):
+        """Retrieves and display weather information"""
+        latitude = self.input_latitude.get().strip()
+        longitude = self.input_longitude.get().strip()
         
-        url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={long}&appid={api_key}&units=metric"
+        if not latitude or not longitude:
+            self.weather_info.set("Please enter both the latitude and the longitude.")
+            return
+        
+        try:
+            latitude = float(latitude)
+            longitude = float(longitude)
+        except ValueError:
+            self.weather_info.set("Invalid latitude or longitude. Please enter numeric values.")
+            return
 
-        response = requests.get(url)
-        data = json.loads(response.text)
+        api_key = self.get_api_key()
+        url = f"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={api_key}&units=metric"
 
         try:
-            city = data.get("name", "your chosen location")
+            response = requests.get(url)
+            response.raise_for_status()
+            data = response.json()
+
+            city = data.get("name", "your selected location")
             temperature = data["main"]["temp"]
             description = data["weather"][0]["description"]
             information = (
                 f"The current temperature in {city} is {temperature:.1f} degrees Celsius.\n"
                 f"Additional details: {description}."
             )
-
-        except Exception:
+        except Exception as e:
+            print(f"Error: {e}")
             information = "Could not retrieve weather data."
-
-        window["weather_info"].update(information)
-
-    # help the user get coordinates for their location
-    if event == "Get Coordinates":
+        
+        self.weather_info.set(information)
+    
+    def get_coordinates(self):
+        """Opens a website to help find coordinates."""
         webbrowser.open("https://latlong.net")
 
-    # close the window
-    if event == "Quit" or event == sg.WIN_CLOSED:
-        break
+    def quit_app(self):
+        """Closes the app."""
+        self.master.quit()
+    
+def main():
+    root = tk.Tk()
+    Weather(root)
+    root.mainloop()
 
-window.close()
+if __name__ == "__main__":
+    main()
