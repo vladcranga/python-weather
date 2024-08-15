@@ -12,7 +12,7 @@ pip install -r requirements.txt
 ```
 
 ## Features:
-- Displays the current temperature for a location based on coordinates
-- A button which opens a location-to-coordinates website
+- Displays the current temperature and a five-day forecast for a location based on coordinates
+- Has a button which opens a location-to-coordinates website
 
 ![example picture](example.png)
