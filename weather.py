@@ -7,12 +7,13 @@ from tkinter import ttk
 import requests
 import json
 import webbrowser
+from datetime import datetime
 
 class Weather:
     def __init__(self, master):
         self.master = master
         self.master.title("Weather Forecast")
-        self.master.geometry("500x400")
+        self.master.geometry("700x500")
         self.master.configure(bg="#f0f0f0")
 
         self.create_widgets()
@@ -51,6 +52,19 @@ class Weather:
         self.weather_info = tk.StringVar()
         ttk.Label(self.frame, textvariable=self.weather_info, wraplength=500, justify="center").grid(
             row=3, column=0, columnspan=2, pady=20)
+        
+        # Create forecast frame
+        self.forecast_frame = ttk.Frame(self.frame)
+        self.forecast_frame.grid(row=4, column=0, columnspan=2, pady=20)
+
+        # Create and place forecast information
+        self.forecast_tree = ttk.Treeview(
+            self.forecast_frame, columns=("Date", "Temperature", "Description"), show="headings")
+        self.forecast_tree.heading("Date", text="Date")
+        self.forecast_tree.heading("Temperature", text="Temperature (°C)")
+        self.forecast_tree.heading("Description", text="Description")
+        self.forecast_tree.pack()
+
     
     def get_api_key(self):
         """Retrieves the API key."""
@@ -58,7 +72,7 @@ class Weather:
             return api_key.read().strip()
     
     def show_weather(self):
-        """Retrieves and display weather information"""
+        """Retrieves and displays weather information."""
         latitude = self.input_latitude.get().strip()
         longitude = self.input_longitude.get().strip()
         
@@ -93,6 +107,43 @@ class Weather:
             information = "Could not retrieve weather data."
         
         self.weather_info.set(information)
+        self.show_forecast(latitude, longitude)
+    
+    def show_forecast(self, latitude, longitude):
+        """Retrieves and displays forecast information."""
+        api_key = self.get_api_key()
+        url = f"https://api.openweathermap.org/data/2.5/forecast?lat={latitude}&lon={longitude}&appid={api_key}&units=metric"
+
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            forecast_data = response.json()
+
+            # Clear previous forecast data
+            for row in self.forecast_tree.get_children():
+                self.forecast_tree.delete(row)
+            
+            daily_forecasts = {}
+            today = datetime.now().strftime("%d-%m-%Y")
+
+            # Extract and display forecast data
+            for item in forecast_data["list"]:
+                date = datetime.fromtimestamp(item["dt"]).strftime("%d-%m-%Y")
+
+                if date == today:
+                    continue
+
+                if date not in daily_forecasts:
+                    temperature = item["main"]["temp"]
+                    description = item["weather"][0]["description"]
+                    daily_forecasts[date] = (temperature, description)
+                
+            for date, (temperature, description) in daily_forecasts.items():
+                self.forecast_tree.insert("", "end", values=(date, f"{temperature:.1f}", description))
+
+        except Exception as e:
+            print(f"Error: {e}")
+            self.weather_info.set(f"{self.weather_info.get()}\nCould not retrieve the forecast.")
     
     def get_coordinates(self):
         """Opens a website to help find coordinates."""
