@@ -38,7 +38,7 @@ class Weather:
         # Configure styles
         style = ttk.Style()
         style.configure("TLabel", font=("Arial", 12))
-        style.configure('TButton', font=("Arial", 11))
+        style.configure("TButton", font=("Arial", 11))
         style.configure("TEntry", font=("Arial", 11))
 
         # Create and place input fields
@@ -111,6 +111,10 @@ class Weather:
                 self.favourite_cities.set("Select a city")
         except FileNotFoundError:
             self.favourite_cities["values"] = ["Unable to load cities"]
+            self.weather_info.set("Favourites file not found. No saved cities available.")
+        except IOError as e:
+            print(f"File Error: {e}")
+            self.weather_info.set("Error reading the favourites file. Please enter a city manually.")
     
     def load_favourite_location(self, event):
         """Loads the latitude and longitude for the selected favourite location."""
@@ -122,12 +126,17 @@ class Weather:
     def save_to_favourites(self):
         """Saves the current city to the favourites list."""
         city = self.input_city.get().strip()
-        if not city:
+        if not city and not city.replace(" ", "").isalpha():
+            self.weather_info.set("No city to save. Please enter a city name.")
             return
-        with open("favourites.txt", "a") as file:
-            file.write(f"{city}\n")
-        self.load_favourite_cities()
-        self.favourite_cities.set(city)
+        try:
+            with open("favourites.txt", "a") as file:
+                file.write(f"{city}\n")
+            self.load_favourite_cities()
+            self.favourite_cities.set(city)
+        except IOError as e:
+            print(f"File Error: {e}")
+            self.weather_info.set("Error saving to favourites file. Please try again later.")
     
     def get_coordinates_from_city(self, city):
         """Returns coordinates based on the provided city name."""
@@ -145,10 +154,20 @@ class Weather:
         
             return data[0]["lat"], data[0]["lon"]
 
+        except requests.exceptions.RequestException as e:
+            print(f"Network Error: {e}")
+            self.weather_info.set("Could not retrieve the coordinates. Please check your network connection.")
+            return None, None
+
+        except ValueError as e:
+            print(f"Data Error: {e}")
+            self.weather_info.set("Invalid data received. Please try again.")
+            return None, None
+
         except Exception as e:
-            print(f"Error: {e}")
-            self.weather_info.set("Could not retrieve the coordinates.")
-            return None, None   
+            print(f"Unexpected Error: {e}")
+            self.weather_info.set("An unexpected error occurred. Please try again later.")
+            return None, None
     
     def show_weather(self):
         """Retrieves and displays weather information."""
@@ -194,9 +213,13 @@ class Weather:
                 f"Additional details: {description}."
             )
 
+        except requests.exceptions.RequestException as e:
+            self.weather_info.set("Network error. Please check your connection and try again.")
+        except ValueError as e:
+            self.weather_info.set("Error processing the data. Please try again later.")
         except Exception as e:
-            print(f"Error: {e}")
-            information = "Could not retrieve weather data."
+            self.weather_info.set("An unexpected error occurred. Please restart the application.")
+            print(f"Unexpected Error: {e}")
         
         self.weather_info.set(information)
         self.show_forecast(latitude, longitude)
