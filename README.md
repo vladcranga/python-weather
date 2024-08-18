@@ -11,8 +11,18 @@ This is a weather app made using Python and the [openweathermap](https://openwea
 pip install -r requirements.txt
 ```
 
+## How to run the application
+Enter 
+```
+python -m weather.main
+```
+in the **python-weather** directory.
+
+- Your API key, *api.txt*, should also be in the python-weather directory.
+
 ## Features:
-- Displays the current temperature and a five-day forecast for a location based on coordinates
+- Displays the current temperature and a five-day forecast for a location based on coordinates or city
 - Has a button which opens a location-to-coordinates website
+- Add cities to favourites
 
 ![example picture](example.png)
