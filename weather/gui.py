@@ -9,7 +9,7 @@ class Weather:
     def __init__(self, master):
         self.master = master
         self.master.title("Weather Forecast")
-        self.master.geometry("700x600")
+        self.master.geometry("700x550")
         self.master.configure(bg="#f0f0f0")
         self.center_window()
 
@@ -30,6 +30,7 @@ class Weather:
         self.frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure(0, weight=1)
+        self.master.resizable(False, False)
 
         # Configure styles
         style = ttk.Style()
@@ -87,10 +88,16 @@ class Weather:
 
         # Create and place forecast information
         self.forecast_tree = ttk.Treeview(
-            self.forecast_frame, columns=("Date", "Temperature", "Description"), show="headings")
-        self.forecast_tree.heading("Date", text="Date")
-        self.forecast_tree.heading("Temperature", text="Temperature (°C)")
+            self.forecast_frame, columns=(
+                "Date", "Temperature", "Description"), show="headings", height=6)
+        self.forecast_tree.heading("Date", text="Date (DD/MM/YYYY)")
+        self.forecast_tree.heading("Temperature", text="Temperature")
         self.forecast_tree.heading("Description", text="Description")
+
+        self.forecast_tree.column("Date", anchor="center")
+        self.forecast_tree.column("Temperature", anchor="center")
+        self.forecast_tree.column("Description", anchor="center")
+
         self.forecast_tree.pack()
 
     def load_favourite_cities(self):
@@ -145,14 +152,15 @@ class Weather:
 
         weather_api = WeatherAPI()
         weather_data = weather_api.get_weather(latitude, longitude)
-        if weather_data:
-            city, temperature, description, icon_data = weather_data
+        if weather_data is not None:
+            city, temperature_celsius, description, icon_data = weather_data
+            temperature_fahrenheit = (temperature_celsius * 9/5) + 32
             self.icon_image = tk.PhotoImage(data=icon_data)
             self.icon_label.configure(image=self.icon_image)
 
             information = (
-                f"The current temperature in {city} is {temperature:.1f} degrees Celsius.\n"
-                f"Additional details: {description}."
+            f"The current temperature in {city} is {temperature_celsius:.1f}°C / {temperature_fahrenheit:.1f}°F.\n"
+            f"Additional details: {description}."
             )
             self.weather_info.set(information)
             self.show_forecast(latitude, longitude)
@@ -168,8 +176,10 @@ class Weather:
             for row in self.forecast_tree.get_children():
                 self.forecast_tree.delete(row)
 
-            for date, (temperature, description) in forecast_data.items():
-                self.forecast_tree.insert("", "end", values=(date, f"{temperature:.1f}", description))
+            for date, (temperature_celsius, description) in forecast_data.items():
+                temperature_fahrenheit = (temperature_celsius * 9/5) + 32
+                self.forecast_tree.insert("", "end", values=(
+                    date, f"{temperature_celsius:.1f}°C / {temperature_fahrenheit:.1f}°F", description))
         else:
             self.weather_info.set(f"{self.weather_info.get()}\nCould not retrieve the forecast.")
 
