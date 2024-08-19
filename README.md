@@ -18,7 +18,12 @@ python -m weather.main
 ```
 in the **python-weather** directory.
 
-- Your API key, *api.txt*, should also be in the python-weather directory.
+- Your API key should be in *config.json* in the python-weather directory:
+```
+{
+    "api_key": "your_api_key"
+}
+```
 
 ## Features:
 - Displays the current temperature and a five-day forecast for a location based on coordinates or city
