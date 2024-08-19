@@ -1,6 +1,7 @@
 # api.py
 import tkinter as tk
 import requests
+import json
 from datetime import datetime
 
 class WeatherAPI:
@@ -10,13 +11,13 @@ class WeatherAPI:
     def get_api_key(self):
         """Retrieves the API key."""
         try:
-            with open("api.txt", "r") as api_key_file:
-                api_key = api_key_file.read().strip()
+            with open("config.json", "r") as config_file:
+                api_key = json.load(config_file)["api_key"]
                 if not api_key:
                     raise ValueError("The API key is empty.")
                 return api_key
         except FileNotFoundError:
-            print("The API key file 'api.txt' was not found.")
+            print("The configuration file 'config.json' was not found.")
             return None
         except ValueError as e:
             print(f"Error: {e}")
