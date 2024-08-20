@@ -1,8 +1,11 @@
 # api.py
 import tkinter as tk
+import logging
 import requests
 import json
 from datetime import datetime
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 class WeatherAPI:
     def __init__(self):
@@ -17,13 +20,13 @@ class WeatherAPI:
                     raise ValueError("The API key is empty.")
                 return api_key
         except FileNotFoundError:
-            print("The configuration file 'config.json' was not found.")
+            logging.error("The configuration file 'config.json' was not found.")
             return None
         except ValueError as e:
-            print(f"Error: {e}")
+            logging.error(f"Error: {e}")
             return None
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            logging.error(f"An unexpected error occurred: {e}")
             return None
 
     def get_weather(self, latitude, longitude):
@@ -44,13 +47,13 @@ class WeatherAPI:
 
             return city, temperature, description, icon_data
         except requests.exceptions.RequestException as e:
-            print(f"Network error: {e}")
+            logging.error(f"Network error: {e}")
             return None
         except ValueError as e:
-            print(f"Data error: {e}")
+            logging.error(f"Data error: {e}")
             return None
         except Exception as e:
-            print(f"Unexpected error: {e}")
+            logging.error(f"Unexpected error: {e}")
             return None
 
     def get_forecast(self, latitude, longitude):
@@ -77,5 +80,5 @@ class WeatherAPI:
 
             return daily_forecasts
         except Exception as e:
-            print(f"Error: {e}")
+            logging.error(f"Error: {e}")
             return None

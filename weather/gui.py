@@ -3,7 +3,10 @@ import tkinter as tk
 from tkinter import ttk
 from weather.api import WeatherAPI
 from weather.data import load_favourite_cities, save_to_favourites, get_coordinates_from_city
+import logging
 import webbrowser
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Weather:
     def __init__(self, master):
@@ -109,6 +112,7 @@ class Weather:
         else:
             self.favourite_cities["values"] = ["Unable to load cities"]
             self.weather_info.set("Favourites file not found. No saved cities available.")
+            logging.error("Failed to load favourite cities. Favourites file not found.")
 
     def load_favourite_location(self, event):
         """Loads the latitude and longitude for the selected favourite location."""
@@ -120,14 +124,16 @@ class Weather:
     def save_to_favourites(self):
         """Saves the current city to the favourites list."""
         city = self.input_city.get().strip()
-        if not city and not city.replace(" ", "").isalpha():
-            self.weather_info.set("No city to save. Please enter a city name.")
+        if not city or not city.replace(" ", "").isalpha():
+            self.weather_info.set("Please enter a valid city name.")
+            logging.warning("Attempted to save an invalid city name.")
             return
         if save_to_favourites(city):
             self.load_favourite_cities()
             self.favourite_cities.set(city)
         else:
             self.weather_info.set("Error saving to favourites file. Please try again later.")
+            logging.error("Failed to save city to favourites.")
 
     def show_weather(self):
         """Retrieves and displays weather information."""
@@ -141,6 +147,7 @@ class Weather:
                 return
         elif not latitude or not longitude:
             self.weather_info.set("Please enter a valid city name or both a latitude and longitude.")
+            logging.warning("Invalid city, latitude, or longitude input.")
             return
 
         try:
@@ -148,6 +155,7 @@ class Weather:
             longitude = float(longitude)
         except ValueError:
             self.weather_info.set("Invalid latitude or longitude. Please enter numeric values.")
+            logging.warning("Invalid latitude or longitude input.")
             return
 
         weather_api = WeatherAPI()
@@ -166,6 +174,7 @@ class Weather:
             self.show_forecast(latitude, longitude)
         else:
             self.weather_info.set("An unexpected error occurred. Please try again later.")
+            logging.error("Could not retrieve the weather information.")
 
     def show_forecast(self, latitude, longitude):
         """Retrieves and displays forecast information."""
@@ -182,6 +191,7 @@ class Weather:
                     date, f"{temperature_celsius:.1f}°C / {temperature_fahrenheit:.1f}°F", description))
         else:
             self.weather_info.set(f"{self.weather_info.get()}\nCould not retrieve the forecast.")
+            logging.error("Could not retrieve the forecast information.")
 
     def get_coordinates(self):
         """Opens a website to help find coordinates."""

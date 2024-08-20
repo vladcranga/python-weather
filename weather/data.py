@@ -1,6 +1,9 @@
 # data.py
 from weather.api import WeatherAPI
+import logging
 import requests
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 def load_favourite_cities():
     """Loads favourite cities from a file."""
@@ -11,7 +14,7 @@ def load_favourite_cities():
     except FileNotFoundError:
         return None
     except IOError as e:
-        print(f"File error: {e}")
+        logging.error(f"File error: {e}")
         return None
 
 def save_to_favourites(city):
@@ -21,7 +24,7 @@ def save_to_favourites(city):
             file.write(f"{city}\n")
         return True
     except IOError as e:
-        print(f"File error: {e}")
+        logging.error(f"File error: {e}")
         return False
 
 def get_coordinates_from_city(city):
@@ -39,11 +42,11 @@ def get_coordinates_from_city(city):
 
         return data[0]["lat"], data[0]["lon"]
     except requests.exceptions.RequestException as e:
-        print(f"Network error: {e}")
+        logging.error(f"Network error: {e}")
         return None, None
     except ValueError as e:
-        print(f"Data error: {e}")
+        logging.error(f"Data error: {e}")
         return None, None
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        logging.error(f"Unexpected error: {e}")
         return None, None
