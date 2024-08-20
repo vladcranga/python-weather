@@ -2,3 +2,4 @@ config.json
 favourites.txt
 __pycache__/
 *.pyc
+.vscode/
