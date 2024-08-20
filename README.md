@@ -1,8 +1,8 @@
-# Python Weather App
+# Python Weather Appplication
 
 ## Description
 
-This app provides a simple interface to check the current weather and a five-day forecast for a given location worldwide. It allows you to search by city or coordinates, using the [OpenWeatherMap](https://openweathermap.org) API, and save favourite cities. 
+This application provides a simple interface to check the current weather and a five-day forecast for a given location worldwide. It allows you to search by city or coordinates, using the [OpenWeatherMap](https://openweathermap.org) API, and save favourite cities. 
 
 ## Installation Instructions
 
@@ -53,7 +53,7 @@ in the **python-weather** directory.
 ## Features:
 - **City Search**: Enter the name of a city to retrieve weather data.
 - **Coordinates Search**: Enter latitude and longitude to get weather information for a specific location.
-- **Favourite Cities**: Save cities by clicking on "Save to Favourites". Saved cities will be available on app launch.
+- **Favourite Cities**: Save cities by clicking on "Save to Favourites". Saved cities will be available on launch.
 - **Five-Day Forecast**: View an extended five-day weather forecast below the current weather details.
 - **Get Coordinates**: Use the "Get Coordinates" button to open a web tool that helps find the latitude and longitude for a location.
 
