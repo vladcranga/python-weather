@@ -1,1 +1,3 @@
-# __init__.py
+"""
+Used for package initialisation.
+"""

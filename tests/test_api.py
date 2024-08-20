@@ -1,13 +1,20 @@
-# test_api.py
+"""
+Unit tests for the WeatherAPI class.
+"""
 import unittest
 from unittest.mock import patch, Mock
 from weather.api import WeatherAPI
 
 class TestWeatherAPI(unittest.TestCase):
-
+    """
+    Test cases for the WeatherAPI class.
+    """
     @patch("weather.api.requests.get")
     def test_get_weather_success(self, mock_get):
-        # simulate the API call's JSON response
+        """
+        Test the get_weather method with a successful API response.
+        """
+        # Simulate the API call's JSON response
         mock_response = Mock()
         mock_response.json.return_value = {
             "name": "Sacramento",
@@ -26,6 +33,9 @@ class TestWeatherAPI(unittest.TestCase):
 
     @patch("weather.api.requests.get")
     def test_get_weather_failure(self, mock_get):
+        """
+        Test the get_weather method with a failed API response.
+        """
         mock_get.side_effect = Exception("Failed API call.")
         
         api = WeatherAPI()

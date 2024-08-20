@@ -1,4 +1,3 @@
-# api.py
 import tkinter as tk
 import logging
 import requests
@@ -8,11 +7,31 @@ from datetime import datetime
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 class WeatherAPI:
+    """
+    A class that interacts with the OpenWeatherMap API to retrieve current weather
+    and forecast data.
+
+    Attributes:
+        api_key (str): The API key used to authenticate with the OpenWeatherMap API.
+    """
+
     def __init__(self):
+        """
+        Initialises the WeatherAPI instance by loading the API key.
+        """
         self.api_key = self.get_api_key()
 
     def get_api_key(self):
-        """Retrieves the API key."""
+        """
+        Retrieves the API key from the config.json file.
+
+        Returns:
+            str: The API key, when retrieved successfully.
+            None: If the API key is not found or an error occurs.
+
+        Raises:
+            ValueError: If the API key is empty.
+        """
         try:
             with open("config.json", "r") as config_file:
                 api_key = json.load(config_file)["api_key"]
@@ -30,7 +49,22 @@ class WeatherAPI:
             return None
 
     def get_weather(self, latitude, longitude):
-        """Retrieves weather data from the API."""
+        """
+        Retrieves current weather data for the specified coordinates.
+
+        Args:
+            latitude (float): The latitude of the location.
+            longitude (float): The longitude of the location.
+
+        Returns:
+            tuple: A tuple containing the city name (str), temperature (float),
+            weather description (str), and weather icon data (bytes).
+            None: If an error occurs during the API request.
+
+        Raises:
+            requests.exceptions.RequestException: If there is a network error.
+            ValueError: If the response data is invalid.
+        """
         url = f"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={self.api_key}&units=metric"
         try:
             response = requests.get(url)
@@ -57,7 +91,22 @@ class WeatherAPI:
             return None
 
     def get_forecast(self, latitude, longitude):
-        """Retrieves forecast data from the API."""
+        """
+        Retrieves a five-day weather forecast for the specified coordinates.
+
+        Args:
+            latitude (float): The latitude of the location.
+            longitude (float): The longitude of the location.
+
+        Returns:
+            dict: A dictionary where keys are dates (str) and values are tuples
+            containing the temperature (float) and weather description (str).
+            None: If an error occurs during the API request.
+
+        Raises:
+            requests.exceptions.RequestException: If there is a network error.
+            ValueError: If the response data is invalid.
+        """
         url = f"https://api.openweathermap.org/data/2.5/forecast?lat={latitude}&lon={longitude}&appid={self.api_key}&units=metric"
         try:
             response = requests.get(url)

@@ -1,4 +1,3 @@
-# gui.py
 import tkinter as tk
 from tkinter import ttk
 from weather.api import WeatherAPI
@@ -9,7 +8,22 @@ import webbrowser
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Weather:
+    """
+    A class to create and manage the Weather Forecast GUI.
+
+    Attributes:
+        master (tk.Tk): The root window of the application.
+        input_city (ttk.Entry): Entry widget for the city name.
+        input_latitude (ttk.Entry): Entry widget for the latitude.
+        input_longitude (ttk.Entry): Entry widget for the longitude.
+        favourite_cities (ttk.Combobox): Combobox for selecting the saved favourite cities.
+        weather_info (tk.StringVar): Variable to display the weather information.
+        icon_label (ttk.Label): Label widget to display the weather icon.
+        forecast_tree (ttk.Treeview): Treeview widget to display the weather forecast.
+    """
+
     def __init__(self, master):
+        """Initialises the application and sets up the widgets."""
         self.master = master
         self.master.title("Weather Forecast")
         self.master.geometry("700x550")
@@ -104,7 +118,11 @@ class Weather:
         self.forecast_tree.pack()
 
     def load_favourite_cities(self):
-        """Loads favourite cities from a file."""
+        """
+        Loads the favourite cities from a file into the combobox.
+
+        If the file is not found or an error occurs, a message is displayed to the user.
+        """
         cities = load_favourite_cities()
         if cities:
             self.favourite_cities["values"] = ["Select a city"] + cities
@@ -115,14 +133,23 @@ class Weather:
             logging.error("Failed to load favourite cities. Favourites file not found.")
 
     def load_favourite_location(self, event):
-        """Loads the latitude and longitude for the selected favourite location."""
+        """
+        Loads the latitude and longitude for the selected favourite location.
+
+        Args:
+            event: The event object triggered by selecting a city from the combobox.
+        """
         city = self.favourite_cities.get()
         if city != "Select a city":
             self.input_city.delete(0, tk.END)
             self.input_city.insert(0, city)
 
     def save_to_favourites(self):
-        """Saves the current city to the favourites list."""
+        """
+        Saves the current city to the favourites list.
+
+        If the city name is invalid or empty, a message is displayed to the user.
+        """
         city = self.input_city.get().strip()
         if not city or not city.replace(" ", "").isalpha():
             self.weather_info.set("Please enter a valid city name.")
@@ -136,7 +163,13 @@ class Weather:
             logging.error("Failed to save city to favourites.")
 
     def show_weather(self):
-        """Retrieves and displays weather information."""
+        """
+        Retrieves and displays weather information for the specified city or coordinates.
+
+        The weather information includes the current temperature, description,
+        and a weather icon. If the input is invalid or the data cannot be retrieved,
+        an error message is displayed.
+        """
         city = self.input_city.get().strip()
         latitude = self.input_latitude.get().strip()
         longitude = self.input_longitude.get().strip()
@@ -177,7 +210,11 @@ class Weather:
             logging.error("Could not retrieve the weather information.")
 
     def show_forecast(self, latitude, longitude):
-        """Retrieves and displays forecast information."""
+        """
+        Retrieves and displays forecast information for the specified coordinates.
+
+        The forecast includes the date, temperature, and a brief weather description.
+        """
         weather_api = WeatherAPI()
         forecast_data = weather_api.get_forecast(latitude, longitude)
         if forecast_data:

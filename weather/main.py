@@ -1,9 +1,8 @@
-# main.py
 from weather.gui import Weather
 import tkinter as tk
 
 def main():
-    # Create the main window
+    """Initialises the main window and starts the Tkinter main event loop."""
     root = tk.Tk()
     Weather(root)
 
