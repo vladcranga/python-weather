@@ -2,7 +2,7 @@
 Unit tests for the GUI.
 """
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from tkinter import Tk
 from weather.gui import Weather
 import time

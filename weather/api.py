@@ -1,4 +1,3 @@
-import tkinter as tk
 import logging
 import requests
 import json
@@ -65,7 +64,10 @@ class WeatherAPI:
             requests.exceptions.RequestException: If there is a network error.
             ValueError: If the response data is invalid.
         """
-        url = f"https://api.openweathermap.org/data/2.5/weather?lat={latitude}&lon={longitude}&appid={self.api_key}&units=metric"
+        url = (
+            f"https://api.openweathermap.org/data/2.5/weather?"
+            f"lat={latitude}&lon={longitude}&appid={self.api_key}&units=metric"
+        )
         try:
             response = requests.get(url)
             response.raise_for_status()
@@ -107,7 +109,10 @@ class WeatherAPI:
             requests.exceptions.RequestException: If there is a network error.
             ValueError: If the response data is invalid.
         """
-        url = f"https://api.openweathermap.org/data/2.5/forecast?lat={latitude}&lon={longitude}&appid={self.api_key}&units=metric"
+        url = (
+            f"https://api.openweathermap.org/data/2.5/forecast?"
+            f"lat={latitude}&lon={longitude}&appid={self.api_key}&units=metric"
+        )
         try:
             response = requests.get(url)
             response.raise_for_status()

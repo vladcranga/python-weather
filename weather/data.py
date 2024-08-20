@@ -48,11 +48,14 @@ def get_coordinates_from_city(city):
         city (str): The name of the city to retrieve coordinates for.
 
     Returns:
-        tuple: A tuple containing latitude and longitude as floats, or (None, None) if the city is not found or an error occurs.
+        tuple: A tuple containing latitude and longitude as floats, or (None, None) if the
+        city is not found or an error occurs.
     """
     api_key = WeatherAPI().get_api_key()
-    url = f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={api_key}"
-
+    url = (
+        f"http://api.openweathermap.org/geo/1.0/direct?"
+        f"q={city}&limit=1&appid={api_key}"
+    )
     try:
         response = requests.get(url)
         response.raise_for_status()
