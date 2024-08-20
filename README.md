@@ -1,14 +1,46 @@
 # Python Weather App
 
-This is a weather app made using Python and the [openweathermap](https://openweathermap.org) API.
+## Description
 
-## Requirements
-- Python 3
-- requests
-- A free API key from [openweathermap](https://openweathermap.org)
+This app provides a simple interface to check the current weather and a five-day forecast for a given location worldwide. It allows you to search by city or coordinates, using the [OpenWeatherMap](https://openweathermap.org) API, and save favourite cities. 
 
+## Installation Instructions
+
+1. Clone the repository:
+```
+git clone https://github.com/vladcranga/python-weather.git
+```
+
+2. Navigate to the project directory:
+```
+cd python-weather
+```
+
+3. Create a virtual environment:
+```
+python -m venv venv
+```
+
+4. Activate the virtual environment:
+- On Windows:
+  ```
+  venv\Scripts\activate
+  ```
+- On macOS/Linux:
+  ```
+  source venv/bin/activate
+  ```
+
+5. Install the required packages:
 ```
 pip install -r requirements.txt
+```
+
+6. Add your (free) API key from [openweathermap](https://openweathermap.org) to `config.json`, which you create in python-weather:
+```
+{
+"api_key": "your_api_key"
+}
 ```
 
 ## How to run the application
@@ -18,20 +50,20 @@ python -m weather.main
 ```
 in the **python-weather** directory.
 
-- Your API key should be in *config.json* in the python-weather directory:
-```
-{
-    "api_key": "your_api_key"
-}
-```
-
 ## Features:
-- Displays the current temperature and a five-day forecast for a location based on coordinates or city
-- Has a button which opens a location-to-coordinates website
-- Add cities to favourites
+- **City Search**: Enter the name of a city to retrieve weather data.
+- **Coordinates Search**: Enter latitude and longitude to get weather information for a specific location.
+- **Favourite Cities**: Save cities by clicking on "Save to Favourites". Saved cities will be available on app launch.
+- **Five-Day Forecast**: View an extended five-day weather forecast below the current weather details.
+- **Get Coordinates**: Use the "Get Coordinates" button to open a web tool that helps find the latitude and longitude for a location.
 
 ![example picture](example.png)
 
 ## Credits
 
-- GUI Icon: Weather icon by iconixar from [Flaticon](https://www.flaticon.com/free-icons/weather).
+- GUI weather icon by iconixar from [Flaticon](https://www.flaticon.com/free-icons/weather).
+
+## Licence
+
+This project is licensed under the [MIT Licence](https://opensource.org/license/MIT).
+
