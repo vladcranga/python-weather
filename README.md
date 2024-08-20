@@ -31,3 +31,7 @@ in the **python-weather** directory.
 - Add cities to favourites
 
 ![example picture](example.png)
+
+## Credits
+
+- GUI Icon: Weather icon by iconixar from [Flaticon](https://www.flaticon.com/free-icons/weather).
