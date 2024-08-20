@@ -1,4 +1,3 @@
-# data.py
 from weather.api import WeatherAPI
 import logging
 import requests
@@ -6,7 +5,13 @@ import requests
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 def load_favourite_cities():
-    """Loads favourite cities from a file."""
+    """
+    Loads favourite cities from a file.
+
+    Returns:
+        list of str: A list of city names, if the file is found and read successfully.
+        None: If the file is not found or an error occurs during reading.
+    """
     try:
         with open("favourites.txt", "r") as file:
             cities = file.readlines()
@@ -18,7 +23,15 @@ def load_favourite_cities():
         return None
 
 def save_to_favourites(city):
-    """Saves the current city to the favourites list."""
+    """
+    Saves the specified city to the favourites list.
+
+    Args:
+        city (str): The name of the city to save to the favourites list.
+
+    Returns:
+        bool: True if the city was saved successfully, False if an error occurred.
+    """
     try:
         with open("favourites.txt", "a") as file:
             file.write(f"{city}\n")
@@ -28,7 +41,15 @@ def save_to_favourites(city):
         return False
 
 def get_coordinates_from_city(city):
-    """Returns coordinates based on the provided city name."""
+    """
+    Returns coordinates based on the provided city name, using the OpenWeatherMap API.
+
+    Args:
+        city (str): The name of the city to retrieve coordinates for.
+
+    Returns:
+        tuple: A tuple containing latitude and longitude as floats, or (None, None) if the city is not found or an error occurs.
+    """
     api_key = WeatherAPI().get_api_key()
     url = f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={api_key}"
 
