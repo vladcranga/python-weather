@@ -23,42 +23,49 @@ jobs:
           python-version: 3.x
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Set up API Key in .env file
         run: echo "OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }}" >> .env
 
       - name: Build executable
-        run: |
-          pyinstaller --onefile weather/main.py --name python-weather
-        shell: bash
+        run: pyinstaller --onefile weather/main.py --name python-weather
 
-      - name: Upload artifact
+      - name: Upload executable artifact
         uses: actions/upload-artifact@v4
         with:
           name: python-weather-app-${{ matrix.os }}
-          path: dist/
+          path: dist/python-weather
 
   release:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download Ubuntu artifact
+      - name: Download Ubuntu executable
         uses: actions/download-artifact@v4
         with:
           name: python-weather-app-ubuntu-latest
+          path: ubuntu/
 
-      - name: Download Windows artifact
+      - name: Download Windows executable
         uses: actions/download-artifact@v4
         with:
           name: python-weather-app-windows-latest
+          path: windows/
+
+      - name: List files after download
+        run: ls -R
+
+      - name: Rename executables for release (adding extensions)
+        run: |
+          mv ubuntu/python-weather python-weather-ubuntu.bin
+          mv windows/python-weather python-weather-windows.exe
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            dist/python-weather-ubuntu
-            dist/python-weather-windows
+            python-weather-ubuntu.bin
+            python-weather-windows.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
