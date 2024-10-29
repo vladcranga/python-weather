@@ -1,6 +1,8 @@
 import logging
 import requests
 import json
+import os
+from dotenv import load_dotenv
 from datetime import datetime
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -22,30 +24,22 @@ class WeatherAPI:
 
     def get_api_key(self):
         """
-        Retrieves the API key from the config.json file.
+        Retrieves the API key from the environment variables.
 
         Returns:
-            str: The API key, when retrieved successfully.
-            None: If the API key is not found or an error occurs.
+            api_key: The API key, when retrieved successfully.
 
         Raises:
-            ValueError: If the API key is empty.
+            ValueError: If the API key is not set.
         """
-        try:
-            with open("config.json", "r") as config_file:
-                api_key = json.load(config_file)["api_key"]
-                if not api_key:
-                    raise ValueError("The API key is empty.")
-                return api_key
-        except FileNotFoundError:
-            logging.error("The configuration file 'config.json' was not found.")
-            return None
-        except ValueError as e:
-            logging.error(f"Error: {e}")
-            return None
-        except Exception as e:
-            logging.error(f"An unexpected error occurred: {e}")
-            return None
+        load_dotenv()
+        
+        api_key = os.getenv("OPENWEATHER_API_KEY")
+
+        if api_key is None:
+            raise ValueError("The API key is not set. Please set the OPENWEATHER_API_KEY environment variable.")
+        
+        return api_key
 
     def get_weather(self, latitude, longitude):
         """

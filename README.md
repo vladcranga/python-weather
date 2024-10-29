@@ -36,11 +36,9 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-6. Add your (free) API key from [openweathermap](https://openweathermap.org) to `config.json`, which you create in python-weather:
+6. Add your (free) API key from [openweathermap](https://openweathermap.org) to `.env`, which you create in python-weather:
 ```
-{
-"api_key": "your_api_key"
-}
+OPENWEATHER_API_KEY=your_api_key
 ```
 
 ## How to run the application
