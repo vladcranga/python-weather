@@ -54,6 +54,11 @@ jobs:
         with:
           name: python-weather-app-windows-latest
 
+      - name: Rename artifacts for release
+        run: |
+          mv python-weather-app-ubuntu-latest/python-weather dist/python-weather-ubuntu
+          mv python-weather-app-windows-latest/python-weather dist/python-weather-windows
+          
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
