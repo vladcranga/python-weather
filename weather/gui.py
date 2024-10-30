@@ -30,6 +30,11 @@ class Weather:
         self.master.configure(bg="#f0f0f0")
         self.center_window()
 
+        self.weather_info = tk.StringVar()
+        self.city_entry = None
+        self.icon_label = None
+        self.forecast_tree = None
+
         self.create_widgets()
 
     def center_window(self):

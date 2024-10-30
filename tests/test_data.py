@@ -11,11 +11,13 @@ class TestDataFunctions(unittest.TestCase):
     """
 
     @patch("weather.data.open", new_callable=mock_open, read_data="New York\nDallas\n")
-    def test_load_favourite_cities(self, mock_file):
+    @patch("weather.data.get_file_path", return_value="favourites.txt")
+    def test_load_favourite_cities(self, mock_get_file_path, mock_file):
         """
         Test the load_favourite_cities function.
         """
         cities = load_favourite_cities()
+        
         self.assertEqual(cities, ["New York", "Dallas"])
 
     @patch("weather.data.open", new_callable=mock_open)
