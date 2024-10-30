@@ -34,7 +34,7 @@ jobs:
 
       - name: Build executable
         run: |
-          pyinstaller --onefile weather/main.py --name python-weather --add-data=favourites.txt:. --add-data=icon.png:. --add-data=.env:.
+          pyinstaller --onefile weather/main.py --name python-weather --add-data=favourites.txt:. --add-data=icon.png:.
         shell: bash
 
       - name: List files in dist after build
