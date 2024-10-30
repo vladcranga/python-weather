@@ -2,6 +2,8 @@
 Unit tests for the data functions.
 """
 import unittest
+import tempfile
+from pathlib import Path
 from unittest.mock import Mock, mock_open, patch
 from weather.data import load_favourite_cities, save_to_favourites, get_coordinates_from_city
 
@@ -10,15 +12,17 @@ class TestDataFunctions(unittest.TestCase):
     Test cases for the data functions.
     """
 
-    @patch("weather.data.open", new_callable=mock_open, read_data="New York\nDallas\n")
-    @patch("weather.data.get_file_path", return_value="favourites.txt")
-    def test_load_favourite_cities(self, mock_get_file_path, mock_file):
+    @patch("weather.data.get_file_path")
+    def test_load_favourite_cities(self, mock_get_file_path):
         """
         Test the load_favourite_cities function.
         """
-        cities = load_favourite_cities()
-        
-        self.assertEqual(cities, ["New York", "Dallas"])
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_file = Path(temp_dir) / "favourites.txt"
+            temp_file.write_text("New York\nDallas\n")
+            mock_get_file_path.return_value = str(temp_file)
+            cities = load_favourite_cities()
+            self.assertEqual(cities, ["New York", "Dallas"])
 
     @patch("weather.data.open", new_callable=mock_open)
     def test_save_to_favourites(self, mock_file):
