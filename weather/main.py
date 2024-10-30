@@ -1,4 +1,5 @@
 from weather.gui import Weather
+from weather.data import get_file_path
 import tkinter as tk
 
 def main():
@@ -8,8 +9,12 @@ def main():
 
     # Weather icons created by iconixar - Flaticon
     # https://www.flaticon.com/free-icons/weather
-    icon = tk.PhotoImage(file="icon.png")
-    root.iconphoto(True, icon)
+    icon_path = get_file_path("icon.png")
+    try:
+        icon = tk.PhotoImage(file=icon_path)
+        root.iconphoto(True, icon)
+    except Exception as e:
+        print(f"Error loading icon: {e}")
     
     root.mainloop()
 

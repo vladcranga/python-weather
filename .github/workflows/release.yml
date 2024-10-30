@@ -8,10 +8,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+    env:
+      OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+    environment: production
 
     steps:
       - name: Checkout code
@@ -23,42 +27,61 @@ jobs:
           python-version: 3.x
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-
+        run: pip install -r requirements.txt
+      
       - name: Set up API Key in .env file
-        run: echo "OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }}" >> .env
+        run: echo "OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}" > .env
+
+      - name: Create favourites.txt with a default city
+        run: echo "Dallas" > favourites.txt
 
       - name: Build executable
         run: |
-          pyinstaller --onefile weather/main.py --name python-weather
+          pyinstaller --onefile weather/main.py --name python-weather --add-data=favourites.txt:. --add-data=icon.png:. --add-data=.env:.
         shell: bash
 
-      - name: Upload artifact
+      - name: List files in dist after build
+        run: ls -R dist
+
+      - name: Upload executable artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: python-weather-app-${{ matrix.os }}
-          path: dist/
+          path: |
+            dist/python-weather
+            dist/python-weather.exe
 
   release:
     needs: build
     runs-on: ubuntu-latest
+
     steps:
-      - name: Download Ubuntu artifact
+      - name: Download Ubuntu executable
         uses: actions/download-artifact@v4
         with:
           name: python-weather-app-ubuntu-latest
+          path: ubuntu/
 
-      - name: Download Windows artifact
+      - name: Download Windows executable
         uses: actions/download-artifact@v4
         with:
           name: python-weather-app-windows-latest
+          path: windows/
+
+      - name: List files after download
+        run: ls -R
+
+      - name: Rename executables for release (adding extensions)
+        run: |
+          mv ubuntu/python-weather python-weather-ubuntu.bin
+          mv windows/python-weather.exe python-weather-windows.exe
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            dist/python-weather-ubuntu
-            dist/python-weather-windows
+            python-weather-ubuntu.bin
+            python-weather-windows.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
